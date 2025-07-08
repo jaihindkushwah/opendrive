@@ -7,7 +7,7 @@ export async function GET(request: Request) {
         console.log("hello");
         const db= await openSqliteDb();
         const data= await db.all(`SELECT * FROM USER`);
-        console.log(data);
+        // console.log(data);
         return NextResponse.json({message:"Successfully started aplication!!!",data},{status:200})
     } catch (error) {
         console.log(error)
