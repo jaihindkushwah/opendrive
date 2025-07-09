@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 
-const baseApi = "http://localhost:3000";
+const baseApi = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 export class UserService {
   private axios: AxiosInstance;
   constructor() {
