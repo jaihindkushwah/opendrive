@@ -1,11 +1,16 @@
 import { cn } from "@/lib/utils";
-import { userService } from "@/services/user.service";
+import { userService } from "@/services/user/service";
+import { Button } from "./ui/button";
+import { LogOut } from "lucide-react";
 
 export interface LogoutBtnProps
   extends React.HTMLAttributes<HTMLButtonElement> {}
 
-
-export const LogoutBtn: React.FC<LogoutBtnProps> = ({ children,className,...props }) => {
+export const LogoutBtn: React.FC<LogoutBtnProps> = ({
+  children,
+  className,
+  ...props
+}) => {
   const logout = async () => {
     try {
       const data = await userService.logout();
@@ -16,15 +21,14 @@ export const LogoutBtn: React.FC<LogoutBtnProps> = ({ children,className,...prop
     }
   };
   return (
-    <button
+    <Button
+      variant="outline"
       {...props}
-      className={cn(
-        "bg-slate-200 text-black px-3 py-1 cursor-pointer",
-        className
-      )}
+      className={cn("cursor-pointer", className)}
       onClick={() => logout()}
     >
-      {children ?? "Logout"} 
-    </button>
+      <LogOut className="h-4 w-4 mr-2" />
+      Logout
+    </Button>
   );
 };

@@ -1,4 +1,4 @@
-import Dashboard from "@/components/dashboard";
+import DashboardPage from "@/components/dashboard-page";
 import Header from "@/components/header";
 import { getSession } from "@/lib/session-wrapper";
 import RootProvider from "@/state/RootProvider";
@@ -14,8 +14,8 @@ export default async function Home() {
 
   return (
     <RootProvider user={session.user}>
-      <Header/>
-      <Dashboard />
+      <Header />
+      <DashboardPage />
     </RootProvider>
   );
 }

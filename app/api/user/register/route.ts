@@ -1,5 +1,6 @@
-import { openSqliteDb } from "@/lib/db";
 import { encryptUserPassword } from "@/lib/helper";
+import { saveSessionWithSignedToken } from "@/lib/session";
+import { UserRepository } from "@/services";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -11,17 +12,22 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-    // console.log(body);
-    const db = await openSqliteDb();
     const hashPassword = encryptUserPassword(body.password);
-     await db.all(
-      `INSERT INTO USER(name,email,password) VALUES('${
-        body.name
-      }','${body.email.toLowerCase()}','${hashPassword}')`
+    const userRepository = await UserRepository.init();
+    const existingUser = await userRepository.findUserByEmail(body.email);
+    if (existingUser) {
+      return NextResponse.json(
+        { message: "User already registered" },
+        { status: 400 }
+      );
+    }
+    await userRepository.createUser({ ...body, password: hashPassword });
+    const { password, ...data } = await userRepository.findUserByEmail(
+      body.email
     );
-    // console.log(newUser);
+    await saveSessionWithSignedToken(data);
     return NextResponse.json(
-      { message: "Successfully started aplication!!!" },
+      { message: "Successfully register user!", data },
       { status: 200 }
     );
   } catch (error) {
@@ -30,7 +36,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: error.message }, { status: 500 });
     }
     return NextResponse.json(
-      { message: "Failed to get Data" },
+      { message: "Something went wrong" },
       { status: 500 }
     );
   }
