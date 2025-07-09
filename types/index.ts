@@ -1,5 +1,3 @@
-
-
 export interface UserInput {
   name: string;
   email: string;
@@ -12,9 +10,6 @@ export type User = UserInput & {
   created_at?: string;
 };
 export type UserUpdateInput = Partial<User>;
-
-
-
 export type UserSessionData = {
   user: {
     id: string;
@@ -24,3 +19,23 @@ export type UserSessionData = {
     name: string;
   };
 };
+
+export interface CarListing extends CarListingInput {
+  id: number;
+  user_id: number;
+  status: "pending" | "approved" | "rejected" | null;
+  created_at: string;
+  updated_at: string;
+  submittedBy?: string;
+}
+export interface CarListingInput {
+  title: string;
+  description: string;
+  brand: string;
+  model: string;
+  year: number;
+  price_per_day: number;
+  location: string;
+}
+
+export type CarListingUpdateInput = Partial<CarListing>;

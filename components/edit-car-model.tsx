@@ -20,8 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "./ui/label";
-// import { useFeedback } from "@/contexts/feedback-context";
-
+import { carService } from "@/services/car/service";
 interface EditCarModalProps {
   car: CarListing | null;
   isOpen: boolean;
@@ -37,9 +36,6 @@ export function EditCarModal({
 }: EditCarModalProps) {
   const [formData, setFormData] = useState<Partial<CarListing>>({});
   const [loading, setLoading] = useState(false);
-  //   const { addMessage } = useFeedback();
-
-  // Initialize form data when car changes
   useEffect(() => {
     if (car) {
       setFormData({
@@ -47,7 +43,7 @@ export function EditCarModal({
         brand: car.brand,
         model: car.model,
         year: car.year,
-        pricePerDay: car.pricePerDay,
+        price_per_day: car.price_per_day,
         location: car.location,
         description: car.description,
         status: car.status,
@@ -58,19 +54,14 @@ export function EditCarModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!car) return;
-
     setLoading(true);
     try {
-      const response = await fetch(`/api/cars/${car.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await carService.updateCarListingById(
+        car.id,
+        JSON.stringify(formData) as any
+      );
 
-      if (response.ok) {
+      if (response.data) {
         // addMessage("success", "Car listing updated successfully");
         onUpdate();
         onClose();
@@ -149,15 +140,15 @@ export function EditCarModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="pricePerDay">Price per Day ($)</Label>
+              <Label htmlFor="price_per_day">Price per Day ($)</Label>
               <Input
-                id="pricePerDay"
+                id="price_per_day"
                 type="number"
-                value={formData.pricePerDay || ""}
+                value={formData.price_per_day || ""}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    pricePerDay: Number.parseInt(e.target.value),
+                    price_per_day: Number.parseInt(e.target.value),
                   })
                 }
                 required

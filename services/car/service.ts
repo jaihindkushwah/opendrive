@@ -1,25 +1,28 @@
+import { CarListingUpdateInput } from "@/types";
 import axios, { AxiosInstance } from "axios";
 
 const baseApi = "http://localhost:3000";
-export class CarRentalService {
+export class CarListingService {
   private axios: AxiosInstance;
   constructor() {
     this.axios = axios.create({
       baseURL: baseApi,
     });
   }
-
-  async getCars() {
-    return this.axios.get("/api/cars");
+  async getCars(params: string) {
+    return this.axios.get(`/api/cars?${params}`);
   }
-  async getCar(id: string) {
+  async getCarById(id: string) {
     return this.axios.get(`/api/cars/${id}`);
   }
-  async addCar(data: any) {
-    return this.axios.post("/api/cars", data);
-  }
-  async updateCar(id: string, data: any) {
+  async updateCarListingById(id: string, data: CarListingUpdateInput) {
     return this.axios.put(`/api/cars/${id}`, data);
+  }
+  async updateCarListingStatusById(id: string, status: string) {
+    return this.axios.patch(`/api/cars/${id}`, { status });
+  }
+  async addCar(data: CarListingUpdateInput) {
+    return this.axios.post("/api/cars", data);
   }
   async deleteCar(id: string) {
     return this.axios.delete(`/api/cars/${id}`);
@@ -32,4 +35,4 @@ export class CarRentalService {
   }
 }
 
-export const carService = new CarRentalService();
+export const carService = new CarListingService();

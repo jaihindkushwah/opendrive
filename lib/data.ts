@@ -4,7 +4,7 @@ export interface CarListing {
   brand: string
   model: string
   year: number
-  pricePerDay: number
+  price_per_day: number
   location: string
   imageUrl: string
   description: string
@@ -31,7 +31,7 @@ const carListings: CarListing[] = [
     brand: "Tesla",
     model: "Model 3",
     year: 2022,
-    pricePerDay: 120,
+    price_per_day: 120,
     location: "San Francisco, CA",
     imageUrl: "https://source.unsplash.com/featured/?tesla,car",
     description: "Eco-friendly electric car with Autopilot. Great for city driving.",
@@ -46,7 +46,7 @@ const carListings: CarListing[] = [
     brand: "Ford",
     model: "Mustang GT",
     year: 2021,
-    pricePerDay: 150,
+    price_per_day: 150,
     location: "Los Angeles, CA",
     imageUrl: "https://source.unsplash.com/featured/?mustang,car",
     description: "Powerful V8, perfect for weekend getaways or highway cruising.",
@@ -61,7 +61,7 @@ const carListings: CarListing[] = [
     brand: "Toyota",
     model: "Corolla",
     year: 2019,
-    pricePerDay: 45,
+    price_per_day: 45,
     location: "Austin, TX",
     imageUrl: "https://source.unsplash.com/featured/?toyota,corolla",
     description: "Reliable, fuel-efficient and budget-friendly.",
@@ -76,7 +76,7 @@ const carListings: CarListing[] = [
     brand: "BMW",
     model: "X5",
     year: 2023,
-    pricePerDay: 200,
+    price_per_day: 200,
     location: "New York, NY",
     imageUrl: "https://source.unsplash.com/featured/?bmw,x5",
     description: "Spacious luxury SUV with premium features and smooth ride.",
@@ -91,7 +91,7 @@ const carListings: CarListing[] = [
     brand: "Honda",
     model: "Civic",
     year: 2020,
-    pricePerDay: 55,
+    price_per_day: 55,
     location: "Chicago, IL",
     imageUrl: "https://source.unsplash.com/featured/?honda,civic",
     description: "Great fuel economy, perfect for city driving and short trips.",

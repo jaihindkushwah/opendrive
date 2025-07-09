@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/session-wrapper";
-import { UserRepository } from "@/services";
+import { UserRepository } from "@/services/user/repository";
 import { NextResponse } from "next/server";
 
 

@@ -22,7 +22,7 @@ async function createDatabases() {
     `);
 
     await db.exec(`
-      CREATE TABLE IF NOT EXISTS LISTINGS (
+      CREATE TABLE IF NOT EXISTS CAR_LISTINGS (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         title TEXT NOT NULL,
@@ -40,7 +40,7 @@ async function createDatabases() {
     `);
 
     await db.exec(`
-      CREATE TABLE IF NOT EXISTS LISTING_AUDIT_LOGS (
+      CREATE TABLE IF NOT EXISTS CAR_LISTING_AUDIT_LOGS (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         listing_id INTEGER NOT NULL,
         admin_id INTEGER NOT NULL,

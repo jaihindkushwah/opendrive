@@ -1,10 +1,8 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import type { CarListing } from "@/lib/data";
 import { EditCarModal } from "@/components/edit-car-model";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -15,178 +13,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Car, LogOut, Search, Filter } from "lucide-react";
-import { useRootState } from "@/state/RootProvider";
-
-interface PaginatedResponse {
-  data: CarListing[];
-  total: number;
-  page: number;
-  totalPages: number;
-}
-
-export const carListings = [
-  {
-    id: "1",
-    title: "Tesla Model 3 - Electric Sedan",
-    brand: "Tesla",
-    model: "Model 3",
-    year: 2022,
-    pricePerDay: 120,
-    location: "San Francisco, CA",
-    imageUrl: "https://source.unsplash.com/featured/?tesla,car",
-    description:
-      "Eco-friendly electric car with Autopilot. Great for city driving.",
-    status: "pending",
-    submittedBy: "john@example.com",
-    submittedAt: "2025-07-05T10:00:00Z",
-    lastUpdated: "2025-07-05T10:00:00Z",
-  },
-  {
-    id: "2",
-    title: "Ford Mustang GT - Sport Coupe",
-    brand: "Ford",
-    model: "Mustang GT",
-    year: 2021,
-    pricePerDay: 150,
-    location: "Los Angeles, CA",
-    imageUrl: "https://source.unsplash.com/featured/?mustang,car",
-    description:
-      "Powerful V8, perfect for weekend getaways or highway cruising.",
-    status: "approved",
-    submittedBy: "emma@example.com",
-    submittedAt: "2025-07-03T15:30:00Z",
-    lastUpdated: "2025-07-04T09:45:00Z",
-  },
-  {
-    id: "3",
-    title: "Toyota Corolla - Reliable Daily Driver",
-    brand: "Toyota",
-    model: "Corolla",
-    year: 2019,
-    pricePerDay: 45,
-    location: "Austin, TX",
-    imageUrl: "https://source.unsplash.com/featured/?toyota,corolla",
-    description: "Reliable, fuel-efficient and budget-friendly.",
-    status: "rejected",
-    submittedBy: "alex@example.com",
-    submittedAt: "2025-07-02T12:20:00Z",
-    lastUpdated: "2025-07-06T08:00:00Z",
-  },
-  {
-    id: "4",
-    title: "BMW X5 - Luxury SUV",
-    brand: "BMW",
-    model: "X5",
-    year: 2023,
-    pricePerDay: 200,
-    location: "New York, NY",
-    imageUrl: "https://source.unsplash.com/featured/?bmw,x5",
-    description: "Spacious luxury SUV with premium features and smooth ride.",
-    status: "pending",
-    submittedBy: "maria@example.com",
-    submittedAt: "2025-07-07T11:10:00Z",
-    lastUpdated: "2025-07-07T11:10:00Z",
-  },
-  {
-    id: "5",
-    title: "Honda Civic - Compact and Efficient",
-    brand: "Honda",
-    model: "Civic",
-    year: 2020,
-    pricePerDay: 55,
-    location: "Chicago, IL",
-    imageUrl: "https://source.unsplash.com/featured/?honda,civic",
-    description:
-      "Great fuel economy, perfect for city driving and short trips.",
-    status: "pending",
-    submittedBy: "dave@example.com",
-    submittedAt: "2025-07-06T09:15:00Z",
-    lastUpdated: "2025-07-06T09:15:00Z",
-  },
-];
+import { useCarListing } from "@/state/CarListingProvider";
 
 export function CarDataTable() {
-  const [listings, setListings] = useState<PaginatedResponse>({
-    data: [],
-    total: 0,
-    page: 1,
-    totalPages: 1,
-  });
-  const [loading, setLoading] = useState(true);
-  const [editingCar, setEditingCar] = useState<CarListing | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
-  //   const { addMessage } = useFeedback();
-  const { user } = useRootState();
-
-  const fetchListings = async (page = 1, status = "all", search = "") => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: "10",
-        ...(status !== "all" && { status }),
-        ...(search && { search }),
-      });
-
-      const response = await fetch(`/api/cars?${params}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setListings(data);
-      } else {
-        // addMessage("error", "Failed to fetch car listings");
-      }
-    } catch {
-      //   addMessage("error", "An error occurred while fetching listings");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchListings(currentPage, statusFilter, searchTerm);
-  }, [currentPage, statusFilter, searchTerm]);
-
-  const handleStatusChange = async (
-    carId: string,
-    status: "approved" | "rejected"
-  ) => {
-    try {
-      const response = await fetch(`/api/cars/${carId}/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("auth-token")}`,
-        },
-        body: JSON.stringify({ status }),
-      });
-
-      if (response.ok) {
-        // addMessage("success", `Car listing ${status} successfully`);
-        fetchListings(currentPage, statusFilter, searchTerm);
-      } else {
-        // addMessage("error", `Failed to ${status} car listing`);
-      }
-    } catch {
-      //   addMessage("error", "An error occurred while updating the car status");
-    }
-  };
+  const {
+    handleStatusChange,
+    listings,
+    loading,
+    editingCar,
+    setEditingCar,
+    currentPage,
+    setCurrentPage,
+    statusFilter,
+    searchTerm,
+    fetchListings,
+  } = useCarListing();
 
   const getStatusBadge = (status: string) => {
     const variants = {
@@ -242,16 +85,18 @@ export function CarDataTable() {
                       <div className="text-sm text-gray-500">({car.year})</div>
                     </div>
                   </TableCell>
-                  <TableCell>{getStatusBadge(car.status)}</TableCell>
+                  <TableCell>{getStatusBadge(car.status || "")}</TableCell>
                   <TableCell>{car.location}</TableCell>
-                  <TableCell>${car.pricePerDay}</TableCell>
-                  <TableCell>{car.submittedBy}</TableCell>
+                  <TableCell>${car.price_per_day}</TableCell>
+                  <TableCell>{car.submittedBy || ""}</TableCell>
                   <TableCell className="space-x-2">
                     <Button
                       size="sm"
                       variant="outline"
                       className="text-green-600 hover:text-green-700 bg-transparent"
-                      onClick={() => handleStatusChange(car.id, "approved")}
+                      onClick={() =>
+                        handleStatusChange(car.id + "", "approved")
+                      }
                       disabled={car.status === "approved"}
                     >
                       Approve
@@ -260,7 +105,9 @@ export function CarDataTable() {
                       size="sm"
                       variant="outline"
                       className="text-red-600 hover:text-red-700 bg-transparent"
-                      onClick={() => handleStatusChange(car.id, "rejected")}
+                      onClick={() =>
+                        handleStatusChange(car.id + "", "rejected")
+                      }
                       disabled={car.status === "rejected"}
                     >
                       Reject
@@ -319,7 +166,7 @@ export function CarDataTable() {
         </Table>
       </CardContent>
       <EditCarModal
-        car={editingCar}
+        car={editingCar as any}
         isOpen={!!editingCar}
         onClose={() => setEditingCar(null)}
         onUpdate={() => fetchListings(currentPage, statusFilter, searchTerm)}

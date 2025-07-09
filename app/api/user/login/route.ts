@@ -1,11 +1,7 @@
 import { comparePassword } from "@/lib/helper";
-import { saveSessionWithSignedToken, sessionOptions } from "@/lib/session";
-import { UserSessionData } from "@/types";
-import { getIronSession } from "iron-session";
+import { saveSessionWithSignedToken } from "@/lib/session";
+import { UserRepository } from "@/services/user/repository";
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
-import { UserRepository } from "@/services";
 
 export async function POST(request: Request) {
   try {

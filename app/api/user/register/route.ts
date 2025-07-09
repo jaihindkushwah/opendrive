@@ -1,6 +1,6 @@
 import { encryptUserPassword } from "@/lib/helper";
 import { saveSessionWithSignedToken } from "@/lib/session";
-import { UserRepository } from "@/services";
+import { UserRepository } from "@/services/user/repository";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
