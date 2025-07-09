@@ -1,4 +1,3 @@
-import { getCarListings } from "@/lib/data";
 import { getSession } from "@/lib/session-wrapper";
 import { CarListingRepository } from "@/services/car/repository";
 import { NextResponse } from "next/server";
@@ -9,9 +8,11 @@ export async function GET(request: Request) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
     const status = searchParams.get("status")||"all";
+    const search= searchParams.get("search")||"";
     const carRepository = await CarListingRepository.init();
-    const data = await carRepository.getCarListings(page, limit,status);
-    return NextResponse.json({ data, total: 10, page: page, totalPages: 100 });
+    const data = await carRepository.getCarListings(page, limit,status,search);
+    const totalPages = Math.ceil(data.length / limit);
+    return NextResponse.json({ data:data.slice((page - 1) * limit, page * limit), total: data.length, page: page, totalPages: totalPages  });
   } catch (error) {
     console.error("Error fetching car listings:", error);
     return NextResponse.json(

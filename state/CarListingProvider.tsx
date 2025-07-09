@@ -1,7 +1,9 @@
 "use client";
 import { carService } from "@/services/car/service";
 import { CarListing } from "@/types";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { throttle } from "lodash";
 
 interface CarListingContextProps {
   listings: PaginatedResponse;
@@ -75,17 +77,23 @@ export function CarListingProvider({ children }: CarListingProviderProps) {
         const data = await response.data;
         setListings(data);
       } else {
-        // addMessage("error", "Failed to fetch car listings");
+        toast.error("Failed to fetch car listings");
       }
     } catch {
-      //   addMessage("error", "An error occurred while fetching listings");
+      toast.error("An error occurred while fetching listings");
     } finally {
       setLoading(false);
     }
   };
+  const throttledFetch = useCallback(
+    throttle((page: number, status: string, search: string) => {
+      fetchListings(page, status, search);
+    }, 500),
+    []
+  );
 
   useEffect(() => {
-    fetchListings(currentPage, statusFilter, searchTerm);
+    throttledFetch(currentPage, statusFilter, searchTerm);
   }, [currentPage, statusFilter, searchTerm]);
 
   const handleStatusChange = async (
@@ -98,13 +106,13 @@ export function CarListingProvider({ children }: CarListingProviderProps) {
         status
       );
       if (response.data) {
-        // addMessage("success", `Car listing ${status} successfully`);
+        toast.success(`Car listing ${status} successfully`);
         fetchListings(currentPage, statusFilter, searchTerm);
       } else {
-        // addMessage("error", `Failed to ${status} car listing`);
+        toast.error("Failed to update car listing status");
       }
     } catch {
-      //   addMessage("error", "An error occurred while updating the car status");
+      toast.error("An error occurred while updating the car listing status");
     }
   };
   return (

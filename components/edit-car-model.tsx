@@ -1,7 +1,6 @@
 "use client";
 import type React from "react";
 import { useEffect, useState } from "react";
-import type { CarListing } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +20,8 @@ import {
 } from "@/components/ui/select";
 import { Label } from "./ui/label";
 import { carService } from "@/services/car/service";
+import { CarListing } from "@/types";
+import { toast } from "sonner";
 interface EditCarModalProps {
   car: CarListing | null;
   isOpen: boolean;
@@ -57,19 +58,19 @@ export function EditCarModal({
     setLoading(true);
     try {
       const response = await carService.updateCarListingById(
-        car.id,
+        car.id + "",
         JSON.stringify(formData) as any
       );
 
       if (response.data) {
-        // addMessage("success", "Car listing updated successfully");
+        toast.success("Car listing updated successfully");
         onUpdate();
         onClose();
       } else {
-        // addMessage("error", "Failed to update car listing");
+        toast.error("Failed to update car listing");
       }
     } catch {
-      //   addMessage("error", "An error occurred while updating the car listing");
+      toast.error("An error occurred while updating the car listing");
     } finally {
       setLoading(false);
     }

@@ -23,7 +23,7 @@ export type UserSessionData = {
 export interface CarListing extends CarListingInput {
   id: number;
   user_id: number;
-  status: "pending" | "approved" | "rejected" | null;
+  status: "pending" | "approved" | "rejected" | undefined;
   created_at: string;
   updated_at: string;
   submittedBy?: string;

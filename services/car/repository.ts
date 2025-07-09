@@ -1,5 +1,5 @@
 import { openSqliteDb } from "@/lib/db";
-import { CarListingInput, CarListingUpdateInput } from "@/types";
+import { CarListing, CarListingInput, CarListingUpdateInput } from "@/types";
 
 export class CarListingRepository {
   private database: any;
@@ -26,14 +26,36 @@ export class CarListingRepository {
     );
     return data;
   }
-  async getCarListings(page: number, limit: number,status:string="all") {
-    const offset = (page - 1) * limit;
-    const statusFilter = status === "all" ? "" : `WHERE cl.status = '${status}'`;
-    const data = await this.database.all(
-      `SELECT cl.*, u.email as submittedBy FROM  CAR_LISTINGS cl JOIN USER u ON cl.user_id = u.id  ${statusFilter} LIMIT ${limit} OFFSET ${offset};`
-    );
-    return data;
+ async getCarListings(page: number, limit: number, status: string = "all", keyword: string = ""):Promise<CarListing[]> {
+  const offset = (page - 1) * limit;
+
+  const conditions: string[] = [];
+  if (status !== "all") {
+    conditions.push(`cl.status = '${status}'`);
   }
+  if (keyword) {
+    const kw = `%${keyword}%`;
+    conditions.push(`(
+      cl.title LIKE '${kw}' OR
+      cl.location LIKE '${kw}' OR
+      CAST(cl.price_per_day AS TEXT) LIKE '${kw}' OR
+      u.email LIKE '${kw}' OR
+      cl.status LIKE '${kw}'
+    )`);
+  }
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+  const data = await this.database.all(
+    `SELECT cl.*, u.email AS submittedBy
+     FROM CAR_LISTINGS cl
+     JOIN USER u ON cl.user_id = u.id
+     ${whereClause}
+     ORDER BY cl.created_at DESC
+     LIMIT ${limit} OFFSET ${offset};`
+  );
+
+  return data;
+}
+
   async getCarListingsByUserId(userId: string, page: number, limit: number) {
     const offset = (page - 1) * limit;
     const data = await this.database.all(

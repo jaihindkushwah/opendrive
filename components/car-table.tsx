@@ -1,6 +1,4 @@
 "use client";
-import { useState, useEffect } from "react";
-import type { CarListing } from "@/lib/data";
 import { EditCarModal } from "@/components/edit-car-model";
 import { Button } from "@/components/ui/button";
 import {

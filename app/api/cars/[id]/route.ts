@@ -1,4 +1,3 @@
-import { getCarById } from "@/lib/data";
 import { CarListingRepository } from "@/services/car/repository";
 import { NextResponse } from "next/server";
 
@@ -7,7 +6,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const {id}= await params;
-  const data=getCarById(id);
+  const carRepository= await CarListingRepository.init();
+  const data= await carRepository.getCarById(id);
   return NextResponse.json({ message: "Successfully started aplication!!!",data });
 }
 
