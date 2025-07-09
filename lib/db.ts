@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 export async function openSqliteDb() {
   return await open({
-    filename: path.resolve(__dirname, "../database.db"),
+    filename: path.resolve(process.cwd(),"public", "./database.db"),
     driver: sqlite3.Database,
   });
 }
